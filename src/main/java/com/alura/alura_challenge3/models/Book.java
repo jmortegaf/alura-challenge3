@@ -16,7 +16,7 @@ public class Book {
     private Long id;
     @Column(unique = true)
     private String title;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name="book_author",
             joinColumns = @JoinColumn(name = "book_id"),
@@ -32,18 +32,16 @@ public class Book {
     public Book(){}
 
     public Book(BookData book_data){
-        System.out.println(book_data.book_id());
         this.title=book_data.title();
         this.authors=new ArrayList<>();
-        for(AuthorData autor_data: book_data.authors()){
-            this.authors.add(new Author(autor_data));
+        for(AuthorData author_data: book_data.authors()){
+            this.authors.add(new Author(author_data));
         }
         for(Author author:this.authors){
             author.set_books(this);
         }
         this.languages=new ArrayList<>();
         for(String language:book_data.languages()){
-            System.out.println("language: "+language);
             this.languages.add(Language.fromString(language));
         }
         this.downloads=book_data.downloads();
@@ -51,10 +49,20 @@ public class Book {
 
     @Override
     public String toString() {
-        return "title='" + title + '\'' +
-                ", authors=" + authors +
-                ", languages=" + languages +
-                ", downloads=" + downloads;
+        StringBuilder output_string= new StringBuilder("=".repeat(120)+"\n"+
+                "title:     " + title + "\n" +
+                "authors:   ");
+        for(int i=0;i<authors.size();i++){
+            output_string.append(authors.get(i).get_formated_author_name()).append("\n");
+            if(i!=authors.size()-1)output_string.append("           ");
+        }
+        output_string.append("languages: ");
+        for(int i=0;i<languages.size();i++){
+            output_string.append(languages.get(i)).append("\n");
+            if(i!=languages.size()-1)output_string.append("           ");
+        }
+        output_string.append("downloads: ").append(downloads);
+        return output_string.toString();
     }
 
     public Long get_id() {

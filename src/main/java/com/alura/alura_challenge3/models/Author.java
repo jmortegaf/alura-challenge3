@@ -29,10 +29,17 @@ public class Author {
 
     @Override
     public String toString() {
-        return "author_id=" +id+
-                ", author_name='" + author_name + '\'' +
-                ", birth_year=" + birth_year +
-                ", death_year=" + death_year;
+        StringBuilder output_string= new StringBuilder("=".repeat(120)+"\n"+
+                "name      : "+this.get_formated_author_name()+"\n"+
+                "birth year: "+birth_year+"\n"+
+                "death year: "+death_year);
+        return output_string.toString();
+    }
+
+    public String get_formated_author_name(){
+        var tmp=author_name.split(", ");
+        if(tmp.length>1)return tmp[1]+" "+tmp[0];
+        else return tmp[0];
     }
 
     public Long get_id() {
